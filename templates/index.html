@@ -68,6 +68,7 @@
     </style>
 </head>
 <body>
+    
     <div id="avatar-container"></div>
     
     <div id="chat-interface">
@@ -188,11 +189,13 @@
                         avatar.rotation.y = Math.sin(Date.now() * 0.001) * 0.3;
                     }
 
+                    speakText(data.reply)
+
                     // Optionally play audio
-                    if (data.audio_url) {
-                        const audio = new Audio(data.audio_url);
-                        audio.play();
-                    }
+                    //if (data.audio_url) {
+                      //  const audio = new Audio(data.audio_url);
+                        //audio.play();
+                   // }
                 })
                 .catch(err => {
                     console.error('Error from backend:', err);
@@ -266,6 +269,42 @@
                 window.speechSynthesis.speak(speech);
             }
         }
+
+        // Avatar startup message
+    window.addEventListener('DOMContentLoaded', () => {
+    const welcomeMessage = "Hello! I'm your AI assistant. How can I help you today?";
+
+    // Ensure voices are loaded
+    const speakWelcome = () => {
+        addMessageToChat('avatar', welcomeMessage);
+        speakText(welcomeMessage);
+
+        // Animate avatar head movement
+        if (avatar) {
+            const startTime = Date.now();
+            const duration = 2000;
+            const animateHead = () => {
+                const elapsed = Date.now() - startTime;
+                if (elapsed < duration) {
+                    avatar.rotation.y = Math.sin(elapsed * 0.005) * 0.3;
+                    requestAnimationFrame(animateHead);
+                } else {
+                    avatar.rotation.y = 0;
+                }
+            };
+            animateHead();
+        }
+    };
+
+    // Wait until voices are available
+    if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = () => speakWelcome();
+    } else {
+        setTimeout(speakWelcome, 500);
+    }
+});
+
+
     </script>
 </body>
 </html>
