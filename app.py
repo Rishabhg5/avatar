@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Set your OpenAI API key
-openai.api_key = "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"
+#openai.api_key = "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"
 @app.route('/')
 def serve_ui():
     return render_template('index.html')
