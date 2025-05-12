@@ -134,24 +134,7 @@
             }
         });
 
-        let avatar1;
-        const loader1 = new THREE.GLTFLoader();
         
-        // Using a default ReadyPlayerMe avatar URL - replace with your custom avatar URL
-        const avatarUrl1= 'https://models.readyplayer.me/681c87b8eb427a0b72b7cd2c.glb';
-        
-        loader.load(avatarUrl1, function(gltf) {
-            avatar1 = gltf.scene;
-            avatar1.position.set(0.5, 0.5, 0.5);
-            scene.add(avatar1);
-            
-            // Find animation mixer
-            if (gltf.animations && gltf.animations.length) {
-                mixer = new THREE.AnimationMixer(avatar1);
-                const idleAction = mixer.clipAction(gltf.animations.find(anim => anim.name === 'Idle'));
-                idleAction.play();
-            }
-        });
         
         // Animation mixer for avatar animations
         let mixer;
@@ -190,28 +173,7 @@
             // Display user message
             addMessageToChat('user', message);
             
-            // Simple response logic (replace with your AI backend)
-        <!--  
-            setTimeout(() => {
-                const responses = [
-                    "I'm happy to help with that!",
-                    "That's an interesting question.",
-                    "Let me think about that for a moment.",
-                    "I understand what you're asking.",
-                    "Thanks for sharing that with me."
-                ];
-                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                addMessageToChat('avatar', randomResponse);
-                
-                // Animate avatar speaking (simple head movement)
-                if (avatar) {
-                    avatar.rotation.y = Math.sin(Date.now() * 0.001) * 0.3;
-                }
-            }, 1000);
-            
-            userInput.value = '';
-            -->
-      
+            //   AI backend
         fetch('http://localhost:5000/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
