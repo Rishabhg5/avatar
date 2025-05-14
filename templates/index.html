@@ -122,15 +122,18 @@
         // Using a default ReadyPlayerMe avatar URL - replace with your custom avatar URL
         const avatarUrl = 'https://models.readyplayer.me/681b0942be47ca6569bbe91d.glb';
         
+        
         loader.load(avatarUrl, function(gltf) {
             avatar = gltf.scene;
             avatar.position.set(0, 0, 0);
             scene.add(avatar);
             
             // Find animation mixer
+            console.log('Available animations:', gltf.animations.map(anim => anim.name));
+
             if (gltf.animations && gltf.animations.length) {
                 mixer = new THREE.AnimationMixer(avatar);
-                const idleAction = mixer.clipAction(gltf.animations.find(anim => anim.name === 'Idle'));
+                const idleAction = mixer.clipAction(gltf.animations.find(anim => anim.name === 'thumbsUp_L'));
                 idleAction.play();
             }
         });
@@ -173,6 +176,19 @@
             
             // Display user message
             addMessageToChat('user', message);
+
+            const thinkingElem = document.createElement('div');
+            thinkingElem.classList.add('message', 'avatar-message');
+            thinkingElem.id = 'thinking-message';
+            let dotCount = 0;
+            const interval = setInterval(() => {
+                thinkingElem.textContent = '.'.repeat(dotCount % 4);
+                dotCount++;
+            }, 500);
+            thinkingElem.setAttribute('data-interval', interval);
+            //thinkingElem.textContent = '...';  // or animate it later
+            chatHistory.appendChild(thinkingElem);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
             
             //   AI backend
         fetch('http://localhost:5000/chat', {
@@ -182,6 +198,12 @@
             })
                 .then(response => response.json())
                 .then(data => {
+
+                    // Remove thinking dots
+                    const thinking = document.getElementById('thinking-message');
+                    if (thinking) thinking.remove();
+                    clearInterval(parseInt(thinkingElem.getAttribute('data-interval')));
+
                     addMessageToChat('avatar', data.reply);
 
                     // Animate avatar speaking
@@ -199,8 +221,13 @@
                 })
                 .catch(err => {
                     console.error('Error from backend:', err);
+                    const thinking = document.getElementById('thinking-message');
+                    if (thinking) thinking.remove();
+                    clearInterval(parseInt(thinkingElem.getAttribute('data-interval')));
+
                     addMessageToChat('avatar', 'Sorry, something went wrong.');
                 });
+                 userInput.value = '';
             }
 
         
@@ -303,8 +330,6 @@
         setTimeout(speakWelcome, 500);
     }
 });
-
-
-    </script>
+</script>
 </body>
 </html>
