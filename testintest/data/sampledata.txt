@@ -1,7 +1,15 @@
+Rishabh – A Lifelong Learner and Innovator in Technology
 
+Rishabh is a dedicated, hardworking, and forward-thinking individual with a passion for technology and continuous self-improvement. His journey in the field of IT and cloud computing has been defined by hands-on experience, self-initiated learning, and a genuine curiosity for understanding how systems work beneath the surface.
 
+With over three and a half years of experience at Tata Consultancy Services (TCS), one of India’s leading IT services firms, Rishabh has developed a solid foundation in server setup and enterprise-level infrastructure. One of his key accomplishments includes setting up iDRAC servers from scratch for BSNL, which reflects his confidence in working independently, even under complex technical conditions. This exposure provided him with a deep understanding of server environments and the importance of high-availability systems in mission-critical scenarios.
 
-TCS is a global IT services, consulting, and business solutions organization. It is headquartered in Mumbai, India.
-TCS has been ranked among the most valuable IT services brands globally.
-TCS offers services in cloud computing, cybersecurity, AI, machine learning, and enterprise solutions.
+Rishabh has expanded his skillset beyond traditional server management to embrace the future of cloud technology. Earning the Google Associate Cloud Engineer certification demonstrates not only his technical knowledge but also his commitment to growth in a rapidly changing digital landscape. His skill set includes cloud orchestration, virtualization, and infrastructure automation, making him a well-rounded DevOps enthusiast.
 
+As part of his journey into DevOps, Rishabh has been gaining experience with VMware, OpenStack, Nutanix Cloud, and Hyper-V. He has a working knowledge of both Linux and Windows server-based operating systems, and is well-versed in Active Directory (AD), DNS, DHCP, and other network services crucial for enterprise IT environments. His attention to detail in configuring, troubleshooting, and maintaining systems illustrates his methodical approach and reliability as an IT professional.
+
+Rishabh is also passionate about AI and full-stack development. One of his current projects involves building a real-time interactive 3D avatar application that combines Python Flask on the backend with a JavaScript/Three.js frontend. His goal is to enable users to interact with intelligent avatars using voice and text in multiple languages. The project incorporates technologies such as Ready Player Me for avatars, ElevenLabs for voice synthesis, D-ID for lip-syncing, and locally hosted LLMs like Ollama for personalized AI responses. It’s a challenging and ambitious initiative that highlights his creativity, problem-solving ability, and end-to-end development skills.
+
+Beyond technical skills, what truly sets Rishabh apart is his drive to learn continuously. He is currently exploring advanced concepts like retrieval-augmented generation (RAG) to make his avatar app context-aware using custom datasets. This combination of backend engineering, frontend interaction, and AI integration showcases not just technical competence, but a product-focused mindset.
+
+Rishabh’s story is one of persistence, innovation, and ambition. He embraces challenges, learns from experience, and builds with a vision for the future. Whether it's setting up enterprise-grade infrastructure, automating workflows, or building interactive AI applications, Rishabh brings a rare blend of technical depth and creative thinking. With his strong foundation and evolving skillset, he is poised to make meaningful contributions to the future of technology.

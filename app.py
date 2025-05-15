@@ -14,10 +14,10 @@ CORS(app)
 def serve_ui():
     return render_template('index.html')
 
-@app.route('/chooseavatar', methods=['POST'])
+#@app.route('/chooseavatar', methods=['POST'])
 #def chooseavatar():
-  #  response = request.post("")
-#    data = response.json()
+ #   response = request.post("")
+    #data = response.json()
 
 
 @app.route('/chat', methods=['POST'])
