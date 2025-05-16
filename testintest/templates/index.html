@@ -211,7 +211,7 @@
                         avatar.rotation.y = Math.sin(Date.now() * 0.001) * 0.3;
                     }
 
-                    speakText(data.reply)
+                    //speakText(data.reply)
 
                     // Optionally play audio
                     //if (data.audio_url) {
@@ -237,7 +237,22 @@
             const messageElem = document.createElement('div');
             messageElem.classList.add('message');
             messageElem.classList.add(sender === 'user' ? 'user-message' : 'avatar-message');
-            messageElem.textContent = text;
+            if(sender === 'avatar'){
+                const textspan = document.createElement('span');
+                textspan.textContent = text;
+
+                const speakBtn = document.createElement('button');
+                speakBtn.textContent = '🔊';
+                speakBtn.style.marginLeft = '10px';
+                speakBtn.onclick = () => speakText(text);
+
+                messageElem.appendChild(textspan);
+                messageElem.appendChild(speakBtn)
+
+            }else{
+                messageElem.textContent = text;
+            }
+            //messageElem.textContent = text;
             chatHistory.appendChild(messageElem);
             chatHistory.scrollTop = chatHistory.scrollHeight;
         }
@@ -285,6 +300,7 @@
         }
         
         // Text-to-speech for avatar responses
+        
         function speakText(text) {
             if ('speechSynthesis' in window) {
                 const speech = new SpeechSynthesisUtterance();
