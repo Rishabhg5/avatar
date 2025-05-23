@@ -1,11 +1,25 @@
 from flask import Flask, request, jsonify
 import subprocess
+from sklearn.feature_extraction.text import TfidfVectorizer
 from rag_utils import retrieve_relevant_docs
+from sklearn.metrics.pairwise import cosine_similarity
 from flask import render_template
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
+
+def rdocs(blog_text, query, top_k =2):
+    doc = [line.strip() for line in blog_text.split('\n') if line.strip()]
+    
+    vectorizer = TfidfVectorizer()
+    doc_vectors = vectorizer.fit_transform(doc)
+
+    query_vec = vectorizer.transform([query])
+    scores = cosine_similarity(query_vec, doc_vectors).flatten()
+    top_indices = scores.argsort()[::-1][:top_k]
+
+    return [doc[i] for i in top_indices]
 
 @app.route('/')
 def serve_ui():
@@ -24,7 +38,7 @@ def chat():
 
     try:
         result = subprocess.run(
-            ["ollama", "run", "llama3", full_prompt],
+            ["ollama", "run", "mistral", full_prompt],
             capture_output=True, text=True, check=True
         )
         response = result.stdout.strip()

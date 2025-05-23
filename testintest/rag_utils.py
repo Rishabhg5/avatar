@@ -1,7 +1,7 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-with open("data/sampledata.txt", "r") as f:
+with open("data/sampledata.txt", "r", encoding = "utf-8") as f:
     documents = [line.strip() for line in f if line.strip()]
 
 vectorizer = TfidfVectorizer()
