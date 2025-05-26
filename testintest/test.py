@@ -3,8 +3,9 @@ import subprocess
 from sklearn.feature_extraction.text import TfidfVectorizer
 from rag_utils import retrieve_relevant_docs
 from sklearn.metrics.pairwise import cosine_similarity
-from flask import render_template
+from flask import render_template 
 from flask_cors import CORS
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -20,6 +21,17 @@ def rdocs(blog_text, query, top_k =2):
     top_indices = scores.argsort()[::-1][:top_k]
 
     return [doc[i] for i in top_indices]
+
+
+def generate_promt(content, task, question):
+     if task == "summarize":
+        return f"Summarize this blog post:\n\n{content}"
+     elif task == "answer":
+        return f"Answer the question based on this blog post:\n\n{content}\n\nQuestion: {question}"
+     elif task == "read":
+        return f"Convert this blog post into a clear spoken script:\n\n{content}"
+     return "Invalid task"
+
 
 @app.route('/')
 def serve_ui():
@@ -46,5 +58,43 @@ def chat():
     except subprocess.CalledProcessError as e:
         return jsonify({'error': e.stderr}), 500
 
+@app.route('/analyze', methods = ['POST'])
+def analyze():
+    data = request.json
+    content = data['content']
+    task = data['task']
+    user_input = data.get('question','')
+    response = request.post('http://localhost:11434/api/generate',json={
+        "model" : "llama3",
+        "prompt" : generate_promt(content, task, user_input),
+        "stream": False
+    })
+    answer = response.json()['response']
+    return jsonify({'answer':answer})
+
+
+@app.route('/speak', methods=['POST'])
+def speak():
+    text = request.json['text']
+    voice_id = os.getenv("ELEVEN_VOICE_ID")
+    api_key = os.getenv("ELEVEN_API_KEY")
+
+    response = request.post(
+        f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}",
+        headers={
+            "xi-api-key": api_key,
+            "Content-Type": "application/json"
+        },
+        json={"text": text, "voice_settings": {"stability": 0.7, "similarity_boost": 0.7}},
+    )
+    with open("static/tts.mp3", "wb") as f:
+        f.write(response.content)
+
+    return jsonify({"audio": "/static/tts.mp3"})
+
+    
+
+
 if __name__ == "__main__":
     app.run(debug=True)
+

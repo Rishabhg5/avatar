@@ -356,24 +356,59 @@
 </script>
 </body>
 <script>
-    window.onload = function () {
-                createAIWidget();
-            };
+    async function getBlogText() {
+            let content = Array.from(document.querySelectorAll('article, .post-body, .post-content'))
+                .map(el => el.innerText).join('\n\n');
+            return content.slice(0, 4000); // limit for safety
+        }
+
+        async function sendToAI(task, question = "") {
+            const content = await getBlogText();
+            const response = await fetch("http://localhost:5000/analyze", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content, task, question })
+            });
+            const data = await response.json();
+            document.getElementById("ai-response").innerText = data.answer;
+
+            if (task === "read") {
+                const ttsResponse = await fetch("http://localhost:5000/speak", {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: data.answer })
+                });
+                const audioData = await ttsResponse.json();
+                const audio = new Audio(audioData.audio);
+                audio.play();
+            }
+        }
+
+
+    
         function createAIWidget() {
                 const div = document.createElement("div");
                 div.innerHTML = `
         <div style="position:fixed; bottom:10px; right:10px; z-index:9999; background:#fff; padding:10px; border-radius:8px; box-shadow:0 0 10px #ccc;">
             <button onclick="sendToAI('summarize')">Summarize</button>
             <button onclick="sendToAI('read')">Read Aloud</button>
-            <input type="text" id="user-question" placeholder="Ask a question" style="margin-top:5px;">
+            <input type="text" id="user-question" placeholder="Ask a question" style="margin-top:5px;"></input>
             <button onclick="sendToAI('answer', document.getElementById('user-question').value)">Ask</button>
             <div id="ai-response" style="margin-top:10px; max-width:200px; white-space:pre-wrap;"></div>
-        </div>
-        `;
+        </div>`
+
                 document.body.appendChild(div);
             }
 
             window.onload = createAIWidget;
+
+
+        function sendToAI(){
+            const summarize = document.getElementById
+            const read = document.getElementById
+            const answer = document.getElementById 
+
+        }
 </script>
 
 </html>
