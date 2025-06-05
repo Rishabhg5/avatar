@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Blog AI Test</title>
+</head>
+<body>
+  <article>
+    <h1>Chhaava Box Office Day 12 Sees Vicky Kaushal’s Historical Blockbuster Nearing Rs 500 Crore Worldwide</h1>
+    <p>Vicky Kaushal’s Chhaava is proving to be an unstoppable force at the box office! The historical drama, which has captured the hearts of audiences with its powerful storytelling, grand visuals, and stellar performances, is now on the verge of crossing the ₹500 crore mark worldwide.
+
+As the film enters Day 12 of its theatrical run, it continues to dominate the domestic and international markets, cementing its place as one of the biggest Bollywood hits of 2025. With massive footfalls in theatres, repeat audiences, and glowing word-of-mouth reviews, Chhaava has become a cultural and cinematic phenomenon.
+From the moment Chhaava hit theatres, it was clear that the film had struck a chord with audiences. The buzz around Vicky Kaushal’s transformation into the legendary warrior Chhatrapati Sambhaji Maharaj, along with stunning action sequences and gripping historical drama, set the stage for a record-breaking run.
+
+The film opened to a thunderous response on Day 1, collecting a whopping ₹50 crore globally. Since then, it has continued its dream run, showing remarkable hold on weekdays and witnessing massive growth on weekends.</p>
+  </article>
+  <img src="Chhaava_2.jpg" alt="Chhaava Movie Poster" style="width:300px;">
+  
+  <script>
+    async function sendToAI(task, question = "") {
+      const content = Array.from(document.querySelectorAll('article, .post-body, .post-content'))
+        .map(el => el.innerText).join('\n\n').slice(0, 4000);
+
+      const response = await fetch("http://localhost:5000/analyze", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({content, task, question})
+      });
+
+      const data = await response.json();
+      document.getElementById("ai-response").innerText = data.answer;
+
+      if (task === "read") {
+        const ttsRes = await fetch("http://localhost:5000/speak", {
+          method: "POST",
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({text: data.answer})
+        });
+        const audio = await ttsRes.json();
+        new Audio(audio.audio).play();
+      }
+    }
+
+    function createAIWidget() {
+      const div = document.createElement("div");
+      div.innerHTML = `
+        <div style="position:fixed; bottom:10px; right:10px; z-index:9999; background:#fff; padding:10px; border-radius:8px; box-shadow:0 0 10px #ccc;">
+            <button onclick="sendToAI('summarize')">Summarize</button>
+            <button onclick="sendToAI('read')">Read Aloud</button>
+            <input type="text" id="user-question" placeholder="Ask a question" style="margin-top:5px;">
+            <button onclick="sendToAI('answer', document.getElementById('user-question').value)">Ask</button>
+            <div id="ai-response" style="margin-top:10px; max-width:200px; white-space:pre-wrap;"></div>
+        </div>
+      `;
+      document.body.appendChild(div);
+    }
+
+    window.onload = createAIWidget;
+  </script>
+</body>
+</html>

@@ -68,7 +68,17 @@
     </style>
 </head>
 <body>
-    
+  <div id = "blog-content">
+    <h2>Chhaava Box Office Day 12 Sees Vicky Kaushal’s Historical Blockbuster Nearing Rs 500 Crore Worldwide</h2>
+    <p>Vicky Kaushal’s Chhaava is proving to be an unstoppable force at the box office! The historical drama, which has captured the hearts of audiences with its powerful storytelling, grand visuals, and stellar performances, is now on the verge of crossing the ₹500 crore mark worldwide.
+
+As the film enters Day 12 of its theatrical run, it continues to dominate the domestic and international markets, cementing its place as one of the biggest Bollywood hits of 2025. With massive footfalls in theatres, repeat audiences, and glowing word-of-mouth reviews, Chhaava has become a cultural and cinematic phenomenon.
+From the moment Chhaava hit theatres, it was clear that the film had struck a chord with audiences. The buzz around Vicky Kaushal’s transformation into the legendary warrior Chhatrapati Sambhaji Maharaj, along with stunning action sequences and gripping historical drama, set the stage for a record-breaking run.
+
+The film opened to a thunderous response on Day 1, collecting a whopping ₹50 crore globally. Since then, it has continued its dream run, showing remarkable hold on weekdays and witnessing massive growth on weekends.</p>
+    </div>
+  <button onclick="summarizeBlog()">Summarize</button>
+  <div id  = "summary-result" style="margin-top: 15px; font-weight: bold ;"></div>    
     <div id="avatar-container"></div>
     
     <div id="chat-interface">
@@ -356,22 +366,49 @@
 </script>
 </body>
 <script>
+    async function summarizeBlog() {
+            const content = document.getElementById("blog-content").innerText;
+            const summaryDiv = document.getElementById("summary-result");
+
+            summaryDiv.innerText = "Summarizing...";
+            try{
+            const response = await fetch("http://localhost:5000/analyze", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    task: "summarize",
+                    content: content
+                })
+            });
+            const data = await response.json();
+            summaryDiv.innerText = data.summary;
+        }
+            catch(error){
+                console.error("Error summarizing blog:", error);
+                summaryDiv.innerText = "Error summarizing blog.";
+            }
+        }
+        <!--
     async function getBlogText() {
             let content = Array.from(document.querySelectorAll('article, .post-body, .post-content'))
                 .map(el => el.innerText).join('\n\n');
             return content.slice(0, 4000); // limit for safety
         }
-
+        -->
         async function sendToAI(task, question = "") {
-            const content = await getBlogText();
+            const content  = document.getElementById("blog-content").innerText ;
+            //const content = await getBlogText();
             const response = await fetch("http://localhost:5000/analyze", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content, task, question })
+                body: JSON.stringify({ 
+                    content: content, 
+                    task: "answer", 
+                 })
             });
             const data = await response.json();
             document.getElementById("ai-response").innerText = data.answer;
-
+            
             if (task === "read") {
                 const ttsResponse = await fetch("http://localhost:5000/speak", {
                     method: "POST",
@@ -381,7 +418,7 @@
                 const audioData = await ttsResponse.json();
                 const audio = new Audio(audioData.audio);
                 audio.play();
-            }
+            } 
         }
 
 
@@ -403,12 +440,7 @@
             window.onload = createAIWidget;
 
 
-        function sendToAI(){
-            const summarize = document.getElementById
-            const read = document.getElementById
-            const answer = document.getElementById 
-
-        }
+       
 </script>
 
 </html>

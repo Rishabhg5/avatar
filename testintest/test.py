@@ -6,6 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from flask import render_template 
 from flask_cors import CORS
 import os
+import requests
 
 app = Flask(__name__)
 CORS(app)
@@ -23,11 +24,11 @@ def rdocs(blog_text, query, top_k =2):
     return [doc[i] for i in top_indices]
 
 
-def generate_promt(content, task, question):
+def generate_promt(content, task):
      if task == "summarize":
         return f"Summarize this blog post:\n\n{content}"
      elif task == "answer":
-        return f"Answer the question based on this blog post:\n\n{content}\n\nQuestion: {question}"
+        return f"Answer the question based on this blog post:\n\n{content}"
      elif task == "read":
         return f"Convert this blog post into a clear spoken script:\n\n{content}"
      return "Invalid task"
@@ -51,8 +52,8 @@ def chat():
     try:
         result = subprocess.run(
             ["ollama", "run", "mistral", full_prompt],
-            capture_output=True, text=True, check=True
-        )
+            capture_output=True, text=True, check=True, encoding='utf-8'
+            )
         response = result.stdout.strip()
         return jsonify({'reply': response})
     except subprocess.CalledProcessError as e:
@@ -63,23 +64,35 @@ def analyze():
     data = request.json
     content = data['content']
     task = data['task']
-    user_input = data.get('question','')
-    response = request.post('http://localhost:11434/api/generate',json={
-        "model" : "llama3",
-        "prompt" : generate_promt(content, task, user_input),
-        "stream": False
-    })
-    answer = response.json()['response']
-    return jsonify({'answer':answer})
-
-
+    if task == 'summarize':
+        response = requests.post('http://localhost:11434/api/generate',json={
+            "model" : "llama3",
+            "prompt" : f"Summarize this blog post:\n\n{content}",
+            "stream": False
+        })
+        return jsonify({'summary': response.json()['response']})
+    
+    if not content or not task:
+        return jsonify({'error': 'Content and task are required'}), 400
+    if task not in ['summarize', 'answer', 'read']:
+        return jsonify({'error': 'Invalid task'}), 400
+    if task == 'answer':
+        user_input = data.get('question','').strip()
+        response = requests.post('http://localhost:11434/api/generate',json={
+            "model" : "llama3",
+            "prompt" : f"Answer the question based on this blog post:\n\n{content}",
+            "stream": False
+        })
+        answer = response.json()['response']
+        return jsonify({'answer':answer})
+'''
 @app.route('/speak', methods=['POST'])
 def speak():
     text = request.json['text']
-    voice_id = os.getenv("ELEVEN_VOICE_ID")
-    api_key = os.getenv("ELEVEN_API_KEY")
+    voice_id = os.getenv("ZUrEGyu8GFMwnHbvLhv2")
+    api_key = os.getenv("Vsk_ce785a28ed7e13d3ff5f2333330dfefbcb9a230854239c43")
 
-    response = request.post(
+    response = requests.post(
         f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}",
         headers={
             "xi-api-key": api_key,
@@ -91,8 +104,7 @@ def speak():
         f.write(response.content)
 
     return jsonify({"audio": "/static/tts.mp3"})
-
-    
+'''
 
 
 if __name__ == "__main__":
